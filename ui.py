@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        MainWindow.setWindowTitle("MainWindow")
+        MainWindow.setWindowTitle("Communal app")
 
         self.date = QtWidgets.QDateEdit(self.centralwidget)
         self.date.setGeometry(QtCore.QRect(10, 0, 110, 22))
