@@ -3,6 +3,10 @@ from PyQt5.QtGui import QDoubleValidator
 
 
 class Ui_MainWindow(object):
+    only_dec = QDoubleValidator()
+    only_dec.setNotation(QDoubleValidator.StandardNotation)
+    only_dec.setDecimals(4)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(410, 330)
@@ -40,22 +44,23 @@ class Ui_MainWindow(object):
         self.cold_water_coef = QtWidgets.QLineEdit(self.centralwidget)
         self.cold_water_coef.setGeometry(QtCore.QRect(10, 50, 51, 20))
         self.cold_water_coef.setObjectName("cold_water_coef")
-        pDoubleValidator = QDoubleValidator(self)
-        pDoubleValidator.setNotation(QDoubleValidator.StandardNotation)
-        pDoubleValidator.setDecimals(4)
-        self.cold_water_coef.setValidator(pDoubleValidator)
+        self.cold_water_coef.setValidator(self.only_dec)
+        
         
         self.hot_water_coef = QtWidgets.QLineEdit(self.centralwidget)
         self.hot_water_coef.setGeometry(QtCore.QRect(10, 80, 51, 20))
         self.hot_water_coef.setObjectName("hot_water_coef")
+        self.hot_water_coef.setValidator(self.only_dec)
         
         self.electricity_coef = QtWidgets.QLineEdit(self.centralwidget)
         self.electricity_coef.setGeometry(QtCore.QRect(10, 110, 51, 20))
         self.electricity_coef.setObjectName("electricity_coef")
+        self.electricity_coef.setValidator(self.only_dec)
         
         self.gas_coef = QtWidgets.QLineEdit(self.centralwidget)
         self.gas_coef.setGeometry(QtCore.QRect(10, 140, 51, 20))
         self.gas_coef.setObjectName("gas_coef")
+        self.gas_coef.setValidator(self.only_dec)
         
         self.cold_water_prev = QtWidgets.QLineEdit(self.centralwidget)
         self.cold_water_prev.setGeometry(QtCore.QRect(170, 50, 91, 20))
@@ -123,11 +128,24 @@ class Ui_MainWindow(object):
         self.result_button.setGeometry(QtCore.QRect(10, 170, 75, 23))
         self.result_button.setObjectName("result_button")
         self.result_button.setText("Расчет")
+
+        self.save_button = QtWidgets.QPushButton(self.centralwidget)
+        self.save_button.setGeometry(QtCore.QRect(10, 200, 75, 23))
+        self.save_button.setObjectName("save_button")
+        self.save_button.setText("сохранить")
+        self.save_button.setEnabled(False)
+
+        self.save_label = QtWidgets.QLabel(self.centralwidget)
+        self.save_label.setGeometry(QtCore.QRect(10, 230, 75, 23))
+        self.save_label.setObjectName("save_label")
+        self.save_label.setText("")
+        self.save_label.setAlignment(QtCore.Qt.AlignCenter)
         
         self.result_label = QtWidgets.QLabel(self.centralwidget)
-        self.result_label.setGeometry(QtCore.QRect(110, 170, 281, 121))
+        self.result_label.setGeometry(QtCore.QRect(170, 170, 230, 85))
         self.result_label.setText("")
         self.result_label.setObjectName("result_label")
+        
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
