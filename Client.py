@@ -4,88 +4,16 @@ from PyQt5.QtWidgets import QFileDialog
 import os
 import psycopg2
 import sys
-import numpy as np
 import datetime
+from database import DataBase
 
 
-class database():
-    """
-    Класс, содержащий методы для работы с базой данных
-    """
-    connection = None
+class MainWindow(QtWidgets.QMainWindow):
 
-    def __init__(self):
-        super(database, self).__init__()
-        self.create_connection()
-        pass
-
-    def create_connection(self):
-        """
-        Метод для подключения к бд
-        """
-        self.connection = psycopg2.connect(
-            database="payments",
-            user="pc",
-            password="1234",
-            host="127.0.0.1",
-            port="5432"
-        )
-
-    def insert_payment(self, data):
-        """
-        Вставка новой записи в таблицу payment
-        """
-        cursor = self.connection.cursor()
-        cursor.execute(
-            f"INSERT INTO payment (cold_water, hot_water, gas, electricity, date, payment) VALUES ({data['cold_water']}, {data['hot_water']}, {data['gas']}, {data['electricity']}, '{(data['date'])}', {data['payment']})")
-        self.connection.commit()
-        cursor.close()
-
-    def recieve_coef(self):
-        """
-        Получение актуальных коэффициентов из бд
-        """
-        keys = ['electricity', 'hot_water', 'cold_water', 'gas']
-        cursor = self.connection.cursor()
-        cursor.execute(
-            "SELECT c_electricity, c_hot_water, c_cold_water, c_gas FROM coefficients ORDER BY id LIMIT 1 "
-        )
-        values = np.reshape(cursor.fetchall(), len(keys))
-        data = dict(list(zip(keys, values)))
-        cursor.close()
-        return data
-
-    def recieve_payment(self):
-        """
-        получение данных последнего платежа
-        """
-        keys = ['date', 'payment', 'electricity',
-                'hot_water', 'cold_water', 'gas']
-        cursor = self.connection.cursor()
-        cursor.execute(
-            "SELECT date, payment, electricity, hot_water, cold_water, gas FROM payment ORDER BY id DESC LIMIT 1")
-        values = np.reshape(cursor.fetchall(), len(keys))
-        data = dict(list(zip(keys, values)))
-        cursor.close()
-        return data
-
-    def close_connection(self):
-        """
-        Закрытие соединения с бд
-        """
-        self.connection.close()
-
-
-class main_window(QtWidgets.QMainWindow):
-
-    base: database
-    prev_data = None
-    coefficients = None
-    current_data = None
-    current_sums = None
+    base: DataBase
 
     def __init__(self):
-        super(main_window, self).__init__()
+        super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.connect_to_database()
@@ -109,7 +37,7 @@ class main_window(QtWidgets.QMainWindow):
         Создание соединения с бд
         """
         try:
-            self.base = database()
+            self.base = DataBase()
             return self.base
         except psycopg2.Error as e:
             print(e)
@@ -193,7 +121,7 @@ class main_window(QtWidgets.QMainWindow):
         self.ui.result_label.setText(
             f"Холодная вода: {self.current_sums['cold_water']}, \nГорячая вода: {self.current_sums['hot_water']}, \nЭл.энергия: {self.current_sums['electricity']},\nГаз: {self.current_sums['gas']},\n\nИтого: {self.current_data['payment']}")
 
-    def closeEvent(self, event):
+    def close_event(self, event):
         """
         Закрытие окна
         """
@@ -202,7 +130,7 @@ class main_window(QtWidgets.QMainWindow):
 
 def main():
     app = QtWidgets.QApplication([])
-    view = main_window()
+    view = MainWindow()
     view.show()
     sys.exit(app.exec())
 
